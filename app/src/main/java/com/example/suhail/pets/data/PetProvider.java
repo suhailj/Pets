@@ -1,12 +1,14 @@
 package com.example.suhail.pets.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-
+import static com.example.suhail.pets.data.PetContract.PetEntry;
 import static com.example.suhail.pets.data.PetContract.PetEntry.PETS;
 import static com.example.suhail.pets.data.PetContract.PetEntry.PET_ID;
 import static com.example.suhail.pets.data.PetContract.PetEntry.TABLE_NAME;
@@ -21,9 +23,9 @@ public class PetProvider extends ContentProvider {
 
     static {
         // uri for pets table
-        petUriMatcher.addURI("com.example.suhail.pets",TABLE_NAME,PETS);
+        petUriMatcher.addURI("com.example.suhail.pets", TABLE_NAME, PETS);
         // uri for pets table row
-        petUriMatcher.addURI("com.example.suhail.",TABLE_NAME,PET_ID);
+        petUriMatcher.addURI("com.example.suhail.", TABLE_NAME, PET_ID);
     }
     @Override
     public boolean onCreate() {
@@ -33,7 +35,23 @@ public class PetProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        return null;
+        PetDbHelper mDbHelper = new PetDbHelper(getContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cursor;
+        switch (petUriMatcher.match(uri)){
+            case PetEntry.PETS:
+                //query for the table
+                cursor = db.query(PetEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,sortOrder);
+                break;
+            case PetEntry.PET_ID:
+                selection = PetEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = db.query(PetEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,sortOrder);
+                break;
+            default:
+                throw new IllegalArgumentException("Cannot Query Unknown Uri "+uri);
+        }
+        return cursor;
     }
 
     @Nullable

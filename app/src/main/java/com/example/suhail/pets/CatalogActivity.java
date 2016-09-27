@@ -46,27 +46,30 @@ public class CatalogActivity extends AppCompatActivity {
                 PetEntry.COLUMN_BREED,
                 PetEntry.COLUMN_GENDER,
                 PetEntry.COLUMN_WEIGHT};
-        String sortOrder = PetEntry._ID + " DESC";
+        String sortOrder = PetEntry._ID + " ASC";
         Cursor cPet = db.query(PetEntry.TABLE_NAME,projection,null,null,null,null,sortOrder);
-        // display row count
-        TextView view = (TextView) findViewById(R.id.text);
-        view.setText("The row count is-" + cPet.getCount());
-        //         display pets detail
-        ArrayList<String> petsList = new ArrayList<>();
-        if(cPet.moveToFirst()) {
-            do{
-                String id = cPet.getString(cPet.getColumnIndexOrThrow(PetEntry._ID));
-                String name = cPet.getString(cPet.getColumnIndexOrThrow(PetEntry.COLUMN_NAME));
-                String breed = cPet.getString(cPet.getColumnIndexOrThrow(PetEntry.COLUMN_BREED));
-                int gender = cPet.getInt(cPet.getColumnIndexOrThrow(PetEntry.COLUMN_GENDER));
-                float weight = cPet.getFloat(cPet.getColumnIndexOrThrow(PetEntry.COLUMN_WEIGHT));
-                petsList.add(id + " - " +name + ", " + breed + ", " + gender + ", " + weight);
-            } while (cPet.moveToNext());
+        try {
+            // display row count
+            TextView view = (TextView) findViewById(R.id.text);
+            view.setText("The row count is-" + cPet.getCount());
+            //         display pets detail
+            ArrayList<String> petsList = new ArrayList<>();
+            if(cPet.moveToFirst()) {
+                do{
+                    String id = cPet.getString(cPet.getColumnIndexOrThrow(PetEntry._ID));
+                    String name = cPet.getString(cPet.getColumnIndexOrThrow(PetEntry.COLUMN_NAME));
+                    String breed = cPet.getString(cPet.getColumnIndexOrThrow(PetEntry.COLUMN_BREED));
+                    int gender = cPet.getInt(cPet.getColumnIndexOrThrow(PetEntry.COLUMN_GENDER));
+                    float weight = cPet.getFloat(cPet.getColumnIndexOrThrow(PetEntry.COLUMN_WEIGHT));
+                    petsList.add(id + " - " +name + ", " + breed + ", " + gender + ", " + weight);
+                } while (cPet.moveToNext());
+            }
+            ArrayAdapter<String> petsAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,petsList);
+            ListView listView = (ListView)findViewById(R.id.petsList);
+            listView.setAdapter(petsAdapter);
+        }finally {
+            cPet.close();
         }
-        ArrayAdapter<String> petsAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,petsList);
-        ListView listView = (ListView)findViewById(R.id.petsList);
-        listView.setAdapter(petsAdapter);
-        cPet.close();
 
     }
     @Override
