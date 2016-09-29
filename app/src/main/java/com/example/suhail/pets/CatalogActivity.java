@@ -47,7 +47,8 @@ public class CatalogActivity extends AppCompatActivity {
                 PetEntry.COLUMN_GENDER,
                 PetEntry.COLUMN_WEIGHT};
         String sortOrder = PetEntry._ID + " DESC";
-        Cursor cPet = db.query(PetEntry.TABLE_NAME,projection,null,null,null,null,sortOrder);
+       // Cursor cPet = getContentResolver().query(Uri.parse(PetEntry.PET_CONTENT_AUTHORITY), projection, null, null, sortOrder);
+         Cursor cPet = db.query(PetEntry.TABLE_NAME,projection,null,null,null,null,sortOrder);
         try {
             // display row count
             TextView view = (TextView) findViewById(R.id.text);

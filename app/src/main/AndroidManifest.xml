@@ -24,7 +24,7 @@
         <provider
             android:authorities="com.example.suhail.pets"
             android:name=".data.PetProvider"
-            android:exported="false"></provider>
+            ></provider>
     </application>
 
 </manifest>
